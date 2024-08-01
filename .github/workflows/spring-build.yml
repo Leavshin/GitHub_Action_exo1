@@ -1,0 +1,45 @@
+# Nom pour le workflow
+name: Build Spring Application
+
+# Déclencheur du workflow
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  # Définition du job pour le build de l'application
+  build-job:
+    # Système d'exploitation pour l'exécution
+    runs-on: ubuntu-latest
+
+    # Étapes à réaliser pour ce job
+    steps:
+      # Étape pour récupérer le code
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Étape pour configurer JDK 17
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+
+      # Étape pour installer les dépendances avec Maven
+      - name: Install Dependencies
+        run: ./mvnw install
+
+      # Étape pour afficher un message indiquant que le build a réussi
+      - name: Build Application
+        run: echo "Application construite avec succès"
+
+  # Définition d'un second job qui dépend du premier
+  test-job:
+    needs: build-job
+    runs-on: ubuntu-latest
+
+    # Étapes à réaliser pour ce job
+    steps:
+      # Étape pour afficher un message que le test est en cours
+      - name: Run tests
+        run: echo "Running tests!"
