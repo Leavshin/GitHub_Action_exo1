@@ -28,7 +28,7 @@ jobs:
 
       # Étape pour installer les dépendances avec Maven
       - name: Install Dependencies
-        run: ./mvnw install
+        run: ./mvn install
 
       # Étape pour afficher un message indiquant que le build a réussi
       - name: Build Application
