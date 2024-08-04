@@ -1,4 +1,3 @@
-# Nom pour le workflow
 name: Build Spring Application
 
 # Déclencheur du workflow
