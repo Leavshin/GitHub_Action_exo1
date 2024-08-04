@@ -30,11 +30,42 @@ jobs:
       - name: Install Dependencies
         run: mvn install
 
+      - name: Run Tests
+        run: mvn test
+        continue-on-error: false
+
       - name: Build Application
         run: echo "Application construite avec succès"
 
       - name: Upload Build Artefact
+        if: success() && github.ref == 'refs/heads/main'
         uses: actions/upload-artifact@v3
         with:
           name: spring-build
           path: target/*.jar
+
+  docker-build:
+    needs: build-job
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Docker
+        uses: docker/setup-buildx-action@v2
+
+      - name: Build Docker image
+        run: |
+          docker build -t my-app:latest .
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Push Docker image
+        run: |
+          docker tag my-app:latest my-dockerhub-username/my-app:latest
+          docker push my-dockerhub-username/my-app:latest
